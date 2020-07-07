@@ -1,0 +1,52 @@
+import pandas as pd
+data=pd.read_csv('Iris.csv')
+#Data cleaning
+data.drop('Id',inplace=True,axis='columns')
+#Check unique elements in target variable
+data['Species'].unique()
+#Change species value: Setosa - 0, Versi - 1, Virgi - 2
+classes={'Iris-setosa':0,'Iris-versicolor':1,'Iris-virginica':2}
+
+data.replace({'Species':classes},inplace=True)
+#Check unique elements to ensure the changes occured
+data['Species'].unique()
+#Data analysis (Visualization): Pair plot 
+import seaborn as sb
+sb.pairplot(data)
+
+sb.pairplot(data,hue='Species',markers=['o','s','D'])
+
+#Create arrays
+x=data.iloc[:,:-1].values #Variables(features): SL,SW,PL,PW
+y=data.iloc[:,-1].values  #Target variable    : Species
+
+#Split universal dataset to train and test datasets
+from sklearn.model_selection import train_test_split as tts
+x_train,x_test,y_train,y_test=tts(x,y,test_size=0.4,random_state=23)
+
+#Check the size of train and test datasets
+print(x_train.shape)
+print(x_test.shape)
+print(y_train.shape)
+print(y_test.shape)
+
+#Normalising values: Mean value=0, Standard deviation=1
+from sklearn .preprocessing import StandardScaler as ss
+scaler = ss()
+scaler.fit(x_train)
+x_train=scaler.transform(x_train)
+x_test= scaler.transform(x_test)
+
+#Classification Algorithm: Logistic Regression
+from sklearn.linear_model import LogisticRegression as loreg
+modellr=loreg()
+modellr.fit(x_train,y_train)
+#modellr=loreg()
+
+print('Accuracy of LogisticRegression on Iris dataset is{}'.format(modellr.score(x_test,y_test)))
+
+#Classification Algorithm: K Nearest Neighbors Classifier
+from sklearn.neighbors import KNeighborsClassifier as knn
+modelknn=knn()
+modelknn.fit(x_train,y_train)
+print('Accuracy of KNN on Iris dataset is {}'.format(modelknn.score(x_test,y_test)))
